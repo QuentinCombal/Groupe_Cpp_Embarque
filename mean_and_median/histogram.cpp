@@ -68,12 +68,12 @@ int main(int argc, char *argv[]) {
             << ", mean = " << mean << std::endl;
 
   // Determine the histogram values
-  vector<int> bin_count(80, 0);  // Tableau qui assosie bin -> nombre de valeurs
+  vector<int> bin_count(80, 0);   // Set all the bin counts to 0
   uint bin;
   for (auto it = buf.begin(); it != buf.end(); it++) {
     auto val = *it;
     bin = val/100;
-    bin_count[bin]++;
+    bin_count[bin]++;  // Increment the corresponding bin count
   }
 
   // Plot the histogram
