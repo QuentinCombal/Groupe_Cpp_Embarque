@@ -70,11 +70,11 @@ int main(int argc, char *argv[]) {
     std::cin >> entree;
 
     if (entree[0] == '+') {
-      min = stod(entree.substr(1)) - stod(entree.substr(1))*0.01;
-      max = stod(entree.substr(1)) + stod(entree.substr(1))*0.01;
+      // min = stod(entree.substr(1)) - stod(entree.substr(1))*0.01;
+      // max = stod(entree.substr(1)) + stod(entree.substr(1))*0.01;
 
-      // min = stod(entree) - stod(entree)*0.01;
-      // max = stod(entree) + stod(entree)*0.01;
+      min = stod(entree) - stod(entree)*0.01;
+      max = stod(entree) + stod(entree)*0.01;
       for (auto it = tab.begin(); it != tab.end(); ++it) {
       if ((it->second > min) && (it->second < max))
         std::cout << "value[" << it->first << "] = " << it->second << std::endl;
