@@ -31,52 +31,39 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <cstring>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include <algorithm>
-#include <map>
 
 using std::string;
 using std::vector;
 using std::map;
 
-// This simple program reads from a file a set of numbers (double format)
-// computes a running mean value, computes the median after sort
-
-// This program has several problems, can you spot them
 
 int main(int argc, char *argv[]) {
   string file_name{argv[1]};
-  map<string, double> tab;
-  string adr_courante;
-  double val_courante;
+  map<string, double> buf;
   std::ifstream fin(file_name, std::ios::in);
 
-  map<string, double>::iterator it;
+  string key;
+  double val;
 
-  while (fin >> adr_courante >> val_courante) {
-    tab[adr_courante] = val_courante;
+  while (fin >> key >> val) {
+    buf[key] = val;
   }
 
-  string entree;
-
-  int fini = 1;
-
-  while (fini == 1) {
-    std::cout << "query>";
-    std::cin >> entree;
-
-    if (entree == "END") {
-      std::cout << "Bye..." << std::endl;
-      fini = 0;
-    } else {
-      it = tab.find(entree);
-      if (it == tab.end()) {
-      std::cout << "This ID does not exist" << std::endl;
-      } else {
-      std::cout << "value[" << entree << "] = " << tab[entree] << std::endl;
-      }
-    }
+  // Read query until "END" is entered
+  bool end = 0;
+  while ( !end ) {
+    std::cout << "Query> ";
+    std::cin >> key;
+    if (key == "END")
+      end = 1;
+    else if (buf.find(key) == buf.end())
+      std::cout << "ID could not be found" << "\n";
+    else
+      std::cout << "Value[" << key << "] = " << buf[key] <<"\n";
   }
 }
