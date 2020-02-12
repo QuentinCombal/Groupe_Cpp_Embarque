@@ -50,9 +50,9 @@ int main(int argc, char *argv[]) {
 
   string line;
   auto mean = 0.0;
-
+  double d;
   while (std::getline(fin, line)) {
-    auto d = std::stod(line);
+    d = std::stod(line);
     buf.push_back(d);
     mean = (buf.size() == 1) ? d : mean + (d - mean) / buf.size();
   }
