@@ -1,8 +1,5 @@
 #pragma once
 
-#include <cstdlib>
-#include <iostream>
-#include <string>
 #include <vector>
 
 class linearInt {
@@ -16,7 +13,7 @@ public:
     this -> m_Xs = axe_x;
     double x1, x2;
     double y1, y2;
-    for(int N = 0; N < taille-1; ++N) {
+    for (int N = 0; N < taille-1; ++N) {
       x1 = axe_x[N];
       x2 = axe_x[N+1];
       y1 = axe_y[N];
@@ -30,7 +27,7 @@ public:
 
   float get_value(const double x) const {
     int indice = 0;
-    while(x > m_Xs[indice+1] && indice < m_Xs.size()-1){
+    while (x > m_Xs[indice+1] && indice < m_Xs.size()-1) {
       ++indice;
       // std::cout << "indice: " << indice << std::endl;
       // std::cout << "m_Xs[indice]: " << m_Xs[indice];
