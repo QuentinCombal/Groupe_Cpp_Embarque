@@ -1,41 +1,90 @@
+// Copyright [2020] <Quentin Combal>
+#include <Eigen/Dense>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
-#include <Eigen/Dense>
 
 class Spline{
  private:
+  int size_;
   std::vector<double> x_;
-  std::vector<double> u_;
+  std::vector<double> y_;
+  Eigen::VectorXd u_;
+
  public:
   Spline(const std::vector<double> x_values,
-         const std::vector<double> y_values) {
-    int size = x_values.size();
-    x_ = x_values;
-    Eigen::MatrixXd M(size, size);
-    Eigen::VectorXd v(size);
-    Eigen::Matrix3d bloc1(3, 3);
-    Eigen::Matrix3d bloc2(3, 3);
-    Eigen::Matrix3d bloc_of_zeroes(3, 3);
+         const std::vector<double> y_values):
+         size_(x_values.size()), x_(x_values), y_(y_values) {
+    Eigen::MatrixXd M(3*size_, 3*size_);
+    Eigen::VectorXd v(3*size_);
+    Eigen::Matrix3d temp_bloc(3, 3);
 
-    bloc_of_zeroes << 0, 0, 0, 0, 0, 0, 0, 0, 0;
+    M.setZero();
+    v.setZero();
 
-    int i, j, k;
+    int i, j;
     double delta_x;
-    double delta_x_previous;
-    for ( j = 0; j < 3*size; j+=3 ) {
-      i = j/3;
-      // Fill with zeroes before the important blocks
-      for ( k = 0; k < 3*(i-1); k+=3)
-        M.block<3, 3>(j, k) = bloc_of_zeroes;
-      
-      // Important blocks
 
-      // Fill with zeroes before the important blocks
-      for ( k = 3*(i+1); k < 3*(size-i-1); k+=3 )
-        M.block<3, 3>(j, k) = bloc_of_zeroes;
+    for ( i = 0; i < size_; ++i ) {
+      j = 3*i;
+
+      // Important blocks
+      if (i != size_-1)
+        delta_x = x_values[i + 1] - x_values[i];
+      else
+        delta_x = 1 - x_values[i];
+
+      // First important bloc
+      if ( i < size_-1 ) {
+        temp_bloc <<  delta_x*delta_x*delta_x, delta_x*delta_x,  delta_x,
+                            3*delta_x*delta_x,       2*delta_x,        1,
+                                    6*delta_x,               2,        0;
+      } else {
+        temp_bloc <<  delta_x*delta_x*delta_x, delta_x*delta_x,  delta_x,
+                                            0,               0,        0,
+                            3*delta_x*delta_x,       2*delta_x,        1;
+      }
+      M.block<3, 3>(j, j)  = temp_bloc;
+
+      // Second important bloc
+      // Add it unless we're on the last row
+      if ( i < size_-1 ) {
+        temp_bloc << 0,  0,  0,
+                     0,  0, -1,
+                     0, -2,  0;
+        M.block<3, 3>(j, j + 3) = temp_bloc;
+      }
+
+      if (i != size_ - 1)
+        v(j) = y_values[i+1] - y_values[i];
+      else
+        v(j) = y_values[0] - y_values[i];
     }
+
+    std::cout << M << "\n";
+    std::cout << v << "\n";
+
+    // Solve u_
+    u_ = M.fullPivHouseholderQr().solve(v);
+    // u_[2] = 0;
+    std::cout  << u_ << "\n";
   }
 
-  ~Spline();
+  float get_value(const double x) const {
+    int i = 0;
+    while (x > x_[i+1] && i < size_-1) ++i;
+
+
+    double delta_x = x - x_[i];
+    double val;
+
+    // val = u_[3*i]*delta_x*delta_x*delta_x;
+    // val += u_[3*i+1]*delta_x*delta_x;
+    // val += u_[3*i+2]*delta_x;
+    // val += y_[i];
+    val = ((u_[3*i]*delta_x + u_[3*i+1])*delta_x +  u_[3*i+2])*delta_x + y_[i];
+    return val;
+  }
+  ~Spline() = default;
 };
+
