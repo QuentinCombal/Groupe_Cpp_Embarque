@@ -1,0 +1,5 @@
+build
+doxygen/html
+*.sublime-workspace
+*.exe
+*.debug
