@@ -1,6 +1,9 @@
 
 #include "mainwindow.h"
 #include "splineimage.h"
+#include "mandelbrot_fractal.h"
+#include "commify.hpp"
+#include "colorgradient.h"
 #include <iostream>
 #include <string>
 #include <QtWidgets>
@@ -38,6 +41,12 @@ void MainWindow::create_actions() {
   action_spline_image_ = new QAction(tr("Spline Image"), this);
   connect(action_spline_image_, SIGNAL(triggered()), this, SLOT(slot_load_spline_image()));
 
+  action_mandelbrot_fractal_ = new QAction(tr("Mandelbrot Fractal"), this);
+  connect(action_mandelbrot_fractal_, SIGNAL(triggered()), this, SLOT(slot_load_mandelbrot_fractal()));
+
+  action_test_gradient_ = new QAction(tr("Test gradient"), this);
+  connect(action_test_gradient_, SIGNAL(triggered()), this, SLOT(slot_load_test_gradient()));
+
   action_exit_ = new QAction(tr("E&xit"), this);
   action_exit_->setShortcut(tr("Ctrl+Q"));
   connect(action_exit_, SIGNAL(triggered()), this, SLOT(slot_exit()));
@@ -62,6 +71,8 @@ void MainWindow::create_menus() {
   menu_open_->addAction(action_checker_board_image_);
   menu_open_->addAction(action_color_triangle_image_);
   menu_open_->addAction(action_spline_image_);
+  menu_open_->addAction(action_mandelbrot_fractal_);
+  menu_open_->addAction(action_test_gradient_);
   menu_open_->addAction(action_exit_);
 
 
@@ -230,5 +241,53 @@ void MainWindow::slot_load_spline_image(){
   splineImage spline(xs,yr,yg,yb);
   image_widget_->setPixmap(QPixmap::fromImage(spline));
   image_widget_->setFixedSize(image_width, image_height);
+  adjustSize();
+}
+
+
+void MainWindow::slot_load_mandelbrot_fractal(){
+  const int fractal_width = 600;
+  const int fractal_height = 400;
+  //Color for the color gradient
+  std::vector<double> xs{0.  , 0.16, 0.42, 0.6425, 0.8575};
+  std::vector<double> yr{0.  , 32. , 237., 215.  , 0.    };
+  std::vector<double> yg{7.  , 107., 255., 170.  , 10.   };
+  std::vector<double> yb{100., 183., 235., 40.   , 15.   };
+  //Construct the gradient
+  ColorGradient gradient(2048,xs,yr,yg,yb);
+
+  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::high_resolution_clock::now();
+  Mandelbrot_fractal fractal(fractal_width,fractal_height, gradient);
+  std::chrono::time_point<std::chrono::system_clock> end = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> elapsed_time = end - start;
+  std::cout << "Info: image calculated in " << Commify(elapsed_time.count()*1E6)<< " µs" <<std::endl;
+
+  image_widget_->setPixmap(QPixmap::fromImage(fractal));
+  image_widget_->setFixedSize(fractal_width, fractal_height);
+  adjustSize();
+}
+
+void MainWindow::slot_load_test_gradient(){
+  //Color for the color gradient
+  std::vector<double> xs{0.  , 0.16, 0.42, 0.6425, 0.8575};
+  std::vector<double> yr{0.  , 32. , 237., 215.  , 0.    };
+  std::vector<double> yg{7.  , 107., 255., 170.  , 10.   };
+  std::vector<double> yb{100., 183., 235., 40.   , 15.   };
+  //Construct the gradient
+  ColorGradient gradient(2048,xs,yr,yg,yb);
+
+  QImage test(1024,600, QImage::Format_RGB32);
+  QPainter painter(&test);
+  for (int xpos = 0; xpos < 1024; ++xpos) {
+    painter.setPen(gradient[xpos*2]);
+    painter.drawLine(xpos,0,xpos,599);
+  }
+
+  std::cout << gradient[0] << std::endl;
+  std::cout << gradient[2047] << std::endl;
+
+  image_widget_->setPixmap(QPixmap::fromImage(test));
+  image_widget_->setFixedSize(1024, 600);
   adjustSize();
 }

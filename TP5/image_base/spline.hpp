@@ -70,7 +70,7 @@ class Spline{
     // std::cout << v << "\n";
   }
 
-  float get_value(double x) const {
+  double get_value(double x) const {
 
     if (x <= x_[0])
       x = x_[0];

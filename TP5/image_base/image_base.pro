@@ -13,11 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    colorgradient.cpp \
     mainwindow.cpp \
+    mandelbrot_fractal.cpp \
     splineimage.cpp
 
 
 HEADERS  += mainwindow.h \
+  colorgradient.h \
+  commify.hpp \
+  mandelbrot_fractal.h \
   spline.hpp \
   splineimage.h
 

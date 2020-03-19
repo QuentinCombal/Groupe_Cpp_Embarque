@@ -5,6 +5,7 @@
 
 #include <QMainWindow>
 #include <vector>
+#include <thread>
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -28,6 +29,8 @@ private slots:
   void slot_load_checker_board_image();
   void slot_load_color_triangle_image();
   void slot_load_spline_image();
+  void slot_load_mandelbrot_fractal();
+  void slot_load_test_gradient();
 
 private:
   void create_menus();
@@ -36,6 +39,8 @@ private:
   QAction *action_checker_board_image_;
   QAction *action_color_triangle_image_;
   QAction *action_spline_image_;
+  QAction *action_mandelbrot_fractal_;
+  QAction *action_test_gradient_;
   QAction *action_about_;
   QAction *action_exit_;
 
