@@ -21,9 +21,10 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
   colorgradient.h \
-  commify.hpp \
+  commify.h \
+  elec4_util.h \
   mandelbrot_fractal.h \
-  spline.hpp \
+  spline.h \
   splineimage.h
 
 QMAKE_CXXFLAGS += -std=c++14 -mavx

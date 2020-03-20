@@ -1,0 +1,29 @@
+My computer : 4 threads
+
+Time to compute the fractal depending on the # of threads :
+xc = -0.5
+yc = 0.0
+d  = 1.0
+
+Version avec std::complex
+
+Threads 		Time in µs
+1			3,751,547
+2			2,613,710
+4			2,451,296
+8			1,658,908
+16			1,465,814
+32			1,480,432
+64			1,502,911
+
+
+Version avec calcul direct de normes
+
+Threads 		Time in µs
+1			548,331
+2			404,489
+4			360,645
+8			248,019
+16			213,871
+32			230,571
+64			232,749

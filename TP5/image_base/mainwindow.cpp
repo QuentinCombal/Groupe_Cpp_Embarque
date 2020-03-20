@@ -2,7 +2,7 @@
 #include "mainwindow.h"
 #include "splineimage.h"
 #include "mandelbrot_fractal.h"
-#include "commify.hpp"
+#include "commify.h"
 #include "colorgradient.h"
 #include <iostream>
 #include <string>
@@ -124,10 +124,9 @@ void MainWindow::slot_load_checker_board_image() {
 // sRGB Color Triangle
 //
 
-const int frame_size = 600;
 
 void MainWindow::slot_load_color_triangle_image() {
-
+  const int frame_size = 600;
   QImage color_triangle(frame_size, frame_size, QImage::Format_RGB32);
   QPainter painter(&color_triangle);
   // New pen with greenish color
@@ -230,10 +229,11 @@ void MainWindow::slot_load_color_triangle_image() {
   adjustSize();
 }
 
-const int image_height = 512;
-const int image_width = 1024;
+
 
 void MainWindow::slot_load_spline_image(){
+  const int image_height = 512;
+  const int image_width = 1024;
   std::vector<double> xs{0.  , 0.16, 0.42, 0.6425, 0.8575};
   std::vector<double> yr{0.  , 32. , 237., 215.  , 0.    };
   std::vector<double> yg{7.  , 107., 255., 170.  , 10.   };
@@ -244,10 +244,19 @@ void MainWindow::slot_load_spline_image(){
   adjustSize();
 }
 
+double xc = -0.5;
+double yc = 0.0;
+double d = 1.0;
+//double xc = -1.02390549069711123;
+//double yc = 0.249109414132206636;
+//double d = 0.00737869762948382968;
+bool julia = 0;
 
 void MainWindow::slot_load_mandelbrot_fractal(){
-  const int fractal_width = 600;
-  const int fractal_height = 400;
+  const int fractal_width = 1000;
+  const int fractal_height = 600;
+
+
   //Color for the color gradient
   std::vector<double> xs{0.  , 0.16, 0.42, 0.6425, 0.8575};
   std::vector<double> yr{0.  , 32. , 237., 215.  , 0.    };
@@ -256,16 +265,65 @@ void MainWindow::slot_load_mandelbrot_fractal(){
   //Construct the gradient
   ColorGradient gradient(2048,xs,yr,yg,yb);
 
-  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::high_resolution_clock::now();
-  Mandelbrot_fractal fractal(fractal_width,fractal_height, gradient);
-  std::chrono::time_point<std::chrono::system_clock> end = std::chrono::high_resolution_clock::now();
+  /* Code de test pour le temps moyen d'execution avec plusieurs threads
+   *
+   * double mean_time=0;
+   * for (int i = 0; i < 20; ++i) {
+   *
+   *   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::high_resolution_clock::now();
+   *   Mandelbrot_fractal fractal(fractal_width,fractal_height, xc, yc, d, gradient);
+   *   std::chrono::time_point<std::chrono::system_clock> end = std::chrono::high_resolution_clock::now();
+   *   std::chrono::duration<double> elapsed_time = end - start;
+   *   mean_time += elapsed_time.count()*1E6;
+   * }
+   *std::cout << "Info: average calculation time " << mean_time/20.0<< " µs" <<std::endl;
+   */
 
+  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::high_resolution_clock::now();
+  Mandelbrot_fractal fractal(fractal_width,fractal_height, xc, yc, d, julia, gradient);
+  std::chrono::time_point<std::chrono::system_clock> end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
+
   std::cout << "Info: image calculated in " << Commify(elapsed_time.count()*1E6)<< " µs" <<std::endl;
 
   image_widget_->setPixmap(QPixmap::fromImage(fractal));
   image_widget_->setFixedSize(fractal_width, fractal_height);
   adjustSize();
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event){
+  switch (event->key()) {
+      case Qt::Key_Left:
+          xc -= 0.1*d;
+          MainWindow::slot_load_mandelbrot_fractal();
+          break;
+      case Qt::Key_Right:
+          xc += 0.1*d;
+          MainWindow::slot_load_mandelbrot_fractal();
+          break;
+      case Qt::Key_Down:
+          yc -= 0.1*d;
+          MainWindow::slot_load_mandelbrot_fractal();
+          break;
+      case Qt::Key_Up:
+          yc += 0.1*d;
+          MainWindow::slot_load_mandelbrot_fractal();
+          break;
+      case Qt::Key_Plus:
+          d/=1.1;
+          MainWindow::slot_load_mandelbrot_fractal();
+          break;
+      case Qt::Key_Minus:
+          d*=1.1;
+          MainWindow::slot_load_mandelbrot_fractal();
+          break;
+      case Qt::Key_T:
+          julia = !julia;
+          MainWindow::slot_load_mandelbrot_fractal();
+          break;
+      default:
+          MainWindow::keyPressEvent(event);
+      }
 }
 
 void MainWindow::slot_load_test_gradient(){

@@ -35,6 +35,7 @@ private slots:
 private:
   void create_menus();
   void create_actions();
+  void keyPressEvent(QKeyEvent *event) override;
 
   QAction *action_checker_board_image_;
   QAction *action_color_triangle_image_;

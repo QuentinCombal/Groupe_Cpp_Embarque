@@ -1,5 +1,6 @@
 #include "splineimage.h"
-#include "spline.hpp"
+#include "spline.h"
+#include "elec4_util.h"
 #include <QtWidgets>
 
 const int image_height = 512;
@@ -15,13 +16,17 @@ splineImage::splineImage(std::vector<double> xs, std::vector<double> yr, std::ve
   //Create painter
   QPainter painter(this);
 
+  //Create clamps
+  Clamp<int> clampRgb{0,255};
+  Clamp<double> clampSpline{-10.0,265.0};
+
   //Generate a spline for each color
   Spline redSpline(xs,yr);
   Spline greenSpline(xs,yg);
   Spline blueSpline(xs,yb);
 
   //Plot the splines and color the background
-  float red,green,blue,x;
+  double red,green,blue,x;
   int redPos, greenPos, bluePos, xpos, ypos;
 
   for (xpos = 0; xpos < image_width; ++xpos) {
@@ -32,15 +37,15 @@ splineImage::splineImage(std::vector<double> xs, std::vector<double> yr, std::ve
     blue = blueSpline.get_value(x);
 
     //Draw a vertical line with the corresponding color
-    painter.setPen(qRgb(clipRgb(red),
-                        clipRgb(green),
-                        clipRgb(blue)));
+    painter.setPen(qRgb(clampRgb(red),
+                        clampRgb(green),
+                        clampRgb(blue)));
     painter.drawLine(xpos,0,xpos,image_height-1);
 
     //Plot the splines
-    redPos   = yCoordToPixel(clipSpline(red)  );
-    greenPos = yCoordToPixel(clipSpline(green));
-    bluePos  = yCoordToPixel(clipSpline(blue));
+    redPos   = yCoordToPixel(clampSpline(red)  );
+    greenPos = yCoordToPixel(clampSpline(green));
+    bluePos  = yCoordToPixel(clampSpline(blue));
     this->setPixel(xpos,redPos,qRgb(255, 0, 0));
     this->setPixel(xpos,greenPos,qRgb(0, 255, 0));
     this->setPixel(xpos,bluePos,qRgb(0, 0, 255));
@@ -68,34 +73,18 @@ splineImage::splineImage(std::vector<double> xs, std::vector<double> yr, std::ve
   painter.drawLine(0,ypos,image_width-1,ypos);
 }
 
-inline float splineImage::xPixelToCoord(int xpos){
+inline double splineImage::xPixelToCoord(int xpos){
   return (xmax - xmin)*xpos/(image_width-1) + xmin;
 }
 
-inline int splineImage::xCoordToPixel(float x){
+inline int splineImage::xCoordToPixel(double x){
   return (x-xmin)*(image_width-1)/(xmax-xmin);
 }
 
-inline float splineImage::yPixelToCoord(int ypos){
+inline double splineImage::yPixelToCoord(int ypos){
   return (ymax -ymin)*(1 - ypos/(image_height-1)) + ymin;
 }
 
-inline int splineImage::yCoordToPixel(float y){
+inline int splineImage::yCoordToPixel(double y){
   return (1 - (y-ymin)/(ymax-ymin))*(image_height-1);
-}
-
-int splineImage::clipRgb(int value){
-  if (value < 0)
-    return 0;
-  if (value > 255)
-    return 255;
-  return value;
-}
-
-float splineImage::clipSpline(float value){
-  if (value < ymin)
-    return ymin;
-  if (value > ymax)
-    return ymax;
-  return value;
 }

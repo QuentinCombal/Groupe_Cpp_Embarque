@@ -2,16 +2,12 @@
 #define COLORGRADIENT_H
 #include <vector>
 #include <QColor>
+#include "elec4_util.h"
 
-class ColorGradient
+class ColorGradient: public std::vector<QRgb>
 {
-private:
-  std::vector<QRgb> colorVector_;
 public:
   ColorGradient(int nColors, std::vector<double> xs, std::vector<double> yr, std::vector<double> yg, std::vector<double> yb);
-  QRgb operator[](int i);
-  int size();
-  int clipRgb(int value);
 };
 
 #endif // COLORGRADIENT_H
