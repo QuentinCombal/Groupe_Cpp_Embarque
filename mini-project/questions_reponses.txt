@@ -1,0 +1,15 @@
+2.2 
+L'algorithme parcours chaque ligne/colonne en ne prenant qu'un pixel sur deux.
+Aucun filtrage n'est effectué avant la décimation. Pour les bandes de 1 pixel de large, seule la bande noire est prise à chaque fois.
+La frequence des bandes noires et blanches est trop haute pour être représentée avec la résolution 512x384.
+
+2.3 
+Il faut un filtrage passe bas pour eviter que les fréquences trop grandes engendrent un effet de repliement qui ferait apparaitre des fréquences non désirées.
+Frequénce de coupure vaut au maximum : 1/2 * nPixels 
+Si on veut 30% de la fréquence max : 0.3 * nPixels
+  
+
+3.1
+Deux arguments sont des pointeurs de type int16_t (donnée sur 2 octets), type de données peu commun.
+
+  

@@ -1,0 +1,1 @@
+Passer le poly_ptr en variable privée de TopConfig

@@ -14,6 +14,7 @@
 
 #include "./util.h"
 #include "./decimation.h"
+#include <iostream>
 
 const int fir_coeff[7] = {-3544, 0, 11134, 17588, 11134, 0, -3544};
 
