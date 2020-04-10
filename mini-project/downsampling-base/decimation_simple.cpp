@@ -18,50 +18,6 @@
 
 SimpleDecimation::SimpleDecimation(uint nbThreads) : Decimation{nbThreads}{}
 
-// void SimpleDecimation::do_horizontal
-//     (uint16_t *dst_ptr, uint16_t *src_ptr,
-//     uint dst_width, uint dst_height,
-//     uint dst_stride, uint src_stride){
-    
-//     std::vector<std::thread> threads;
-    
-//     for (uint id = 0; id < nbThreads_; ++id) {
-//       threads.emplace_back([=]() {
-//         horizontal_decimation(
-//           dst_ptr, src_ptr,
-//           dst_width, dst_height,
-//           dst_stride, src_stride,
-//           id);
-//       });
-//     }
-  
-//     for (auto &thread_elem : threads) {
-//       thread_elem.join();
-//     }
-// }
-
-// void SimpleDecimation::do_vertical
-//     (uint16_t *dst_ptr, uint16_t *src_ptr,
-//     uint dst_width, uint dst_height,
-//     uint dst_stride, uint src_stride){
-    
-//     std::vector<std::thread> threads;
-    
-//     for (uint id = 0; id < nbThreads_; ++id) {
-//       threads.emplace_back([=]() {
-//         vertical_decimation(
-//           dst_ptr, src_ptr,
-//           dst_width, dst_height,
-//           dst_stride, src_stride,
-//           id);
-//       });
-//     }
-  
-//     for (auto &thread_elem : threads) {
-//       thread_elem.join();
-//     }
-// }
-
 
 void SimpleDecimation::horizontal_decimation
     (uint16_t *dst_ptr, uint16_t *src_ptr,
